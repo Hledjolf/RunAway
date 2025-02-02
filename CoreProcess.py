@@ -50,7 +50,7 @@ class KalmanFilter:
 dt = 0.1  # time step
 process_noise = np.diag([1, 1, 1, 1, 1, 1])
 measurement_noise = np.diag([1, 1, 1, 1])
-initial_state = np.array([0, 0, 0, 50, 50, 0])
+initial_state = np.array([0, 0, 0, 50, 0, 50])
 initial_covariance = np.eye(6)
 
 # Create Kalman filter instance
@@ -60,7 +60,7 @@ kf = KalmanFilter(dt, process_noise, measurement_noise, initial_state, initial_c
 observations = [
     # Add your observations here in the form of [azimuth, elevation, range, range_rate]
 ]
-observer_position = np.array([10, 0, 0])
+observer_position = np.array([0, 250, 0])
 
 for z in observations:
     kf.predict()
