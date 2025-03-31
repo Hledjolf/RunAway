@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import numpy as np
 from CoreProcess import KalmanFilter
+import time
 
 class MatrixDisplayWindow:
     def __init__(self, root):
@@ -20,41 +21,68 @@ class MatrixDisplayWindow:
         self.observations = []
 
         self.update_display()
+        self.update_time()
 
     def create_widgets(self):
-        self.state_label = ttk.Label(self.root, text="State Vector")
+        # Create a main frame
+        main_frame = ttk.Frame(self.root)
+        main_frame.pack(fill=tk.BOTH, expand=True)
+
+        # Create a left frame for matrices
+        left_frame = ttk.Frame(main_frame)
+        left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        self.state_label = ttk.Label(left_frame, text="State Vector")
         self.state_label.pack()
-        self.state_text = tk.Text(self.root, height=6, width=80)  # Increased width
+        self.state_text = tk.Text(left_frame, height=6, width=80)
         self.state_text.pack()
 
-        self.matrix_A_label = ttk.Label(self.root, text="Matrix A")
+        self.matrix_A_label = ttk.Label(left_frame, text="Matrix A")
         self.matrix_A_label.pack()
-        self.matrix_A_text = tk.Text(self.root, height=6, width=80)  # Increased width
+        self.matrix_A_text = tk.Text(left_frame, height=6, width=80)
         self.matrix_A_text.pack()
 
-        self.matrix_P_label = ttk.Label(self.root, text="Covariance Matrix P")
+        self.matrix_P_label = ttk.Label(left_frame, text="Covariance Matrix P")
         self.matrix_P_label.pack()
-        self.matrix_P_text = tk.Text(self.root, height=6, width=80)  # Increased width
+        self.matrix_P_text = tk.Text(left_frame, height=6, width=80)
         self.matrix_P_text.pack()
 
-        self.process_noise_label = ttk.Label(self.root, text="Process Noise Matrix Q")
+        self.process_noise_label = ttk.Label(left_frame, text="Process Noise Matrix Q")
         self.process_noise_label.pack()
-        self.process_noise_text = tk.Text(self.root, height=6, width=80)  # Increased width
+        self.process_noise_text = tk.Text(left_frame, height=6, width=80)
         self.process_noise_text.pack()
 
-        self.measurement_noise_label = ttk.Label(self.root, text="Measurement Noise Matrix R")
+        # Create a right frame for measurement noise and observation
+        right_frame = ttk.Frame(main_frame)
+        right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+
+        self.measurement_noise_label = ttk.Label(right_frame, text="Measurement Noise Matrix R")
         self.measurement_noise_label.pack()
-        self.measurement_noise_text = tk.Text(self.root, height=6, width=80)  # Increased width
+        self.measurement_noise_text = tk.Text(right_frame, height=6, width=80)
         self.measurement_noise_text.pack()
 
-        self.update_button = ttk.Button(self.root, text="Update", command=self.update_display)
-        self.update_button.pack()
+        self.observation_label = ttk.Label(right_frame, text="Current Observation")
+        self.observation_label.pack()
+        self.observation_text = tk.Text(right_frame, height=6, width=80)
+        self.observation_text.pack()
+
+        # Create a frame for the update button and time counter
+        update_frame = ttk.Frame(self.root)
+        update_frame.pack()
+
+        self.update_button = ttk.Button(update_frame, text="Update", command=self.update_display)
+        self.update_button.pack(side=tk.LEFT)
+
+        self.time_label = ttk.Label(update_frame, text="")
+        self.time_label.pack(side=tk.LEFT)
 
     def update_display(self):
         self.kf.predict()
         if self.observations:
             observation = self.observations.pop(0)
             self.kf.update(observation, self.observer_position)
+            self.observation_text.delete(1.0, tk.END)
+            self.observation_text.insert(tk.END, str(observation))
         
         state = self.kf.get_state()
         self.state_text.delete(1.0, tk.END)
@@ -75,6 +103,11 @@ class MatrixDisplayWindow:
         measurement_noise = self.kf.R
         self.measurement_noise_text.delete(1.0, tk.END)
         self.measurement_noise_text.insert(tk.END, str(measurement_noise))
+
+    def update_time(self):
+        current_time = time.strftime('%Y-%m-%d %H:%M:%S')
+        self.time_label.config(text=current_time)
+        self.root.after(1000, self.update_time)  # Update the time every second
 
 if __name__ == "__main__":
     root = tk.Tk()
