@@ -8,6 +8,7 @@ class MatrixDisplayWindow:
     def __init__(self, root):
         self.root = root
         self.root.title("Matrix Display Window")
+        self.width = 100  # Set width to 100
         self.create_widgets()
 
         # Initialize Kalman Filter
@@ -23,7 +24,6 @@ class MatrixDisplayWindow:
 
         self.update_display()
 
-
     def create_widgets(self):
         # Create a main frame
         main_frame = ttk.Frame(self.root)
@@ -35,22 +35,22 @@ class MatrixDisplayWindow:
 
         self.state_label = ttk.Label(left_frame, text="State Vector")
         self.state_label.pack()
-        self.state_text = tk.Text(left_frame, height=6, width=80)
+        self.state_text = tk.Text(left_frame, height=6, width=self.width)
         self.state_text.pack()
 
         self.matrix_A_label = ttk.Label(left_frame, text="Matrix A")
         self.matrix_A_label.pack()
-        self.matrix_A_text = tk.Text(left_frame, height=6, width=80)
+        self.matrix_A_text = tk.Text(left_frame, height=6, width=self.width)
         self.matrix_A_text.pack()
 
         self.matrix_P_label = ttk.Label(left_frame, text="Covariance Matrix P")
         self.matrix_P_label.pack()
-        self.matrix_P_text = tk.Text(left_frame, height=6, width=80)
+        self.matrix_P_text = tk.Text(left_frame, height=6, width=self.width)
         self.matrix_P_text.pack()
 
         self.process_noise_label = ttk.Label(left_frame, text="Process Noise Matrix Q")
         self.process_noise_label.pack()
-        self.process_noise_text = tk.Text(left_frame, height=6, width=80)
+        self.process_noise_text = tk.Text(left_frame, height=6, width=self.width)
         self.process_noise_text.pack()
 
         # Create a right frame for measurement noise and observation
@@ -59,12 +59,12 @@ class MatrixDisplayWindow:
 
         self.measurement_noise_label = ttk.Label(right_frame, text="Measurement Noise Matrix R")
         self.measurement_noise_label.pack()
-        self.measurement_noise_text = tk.Text(right_frame, height=6, width=80)
+        self.measurement_noise_text = tk.Text(right_frame, height=6, width=self.width)
         self.measurement_noise_text.pack()
 
         self.observation_label = ttk.Label(right_frame, text="Current Observation")
         self.observation_label.pack()
-        self.observation_text = tk.Text(right_frame, height=6, width=80)
+        self.observation_text = tk.Text(right_frame, height=6, width=self.width)
         self.observation_text.pack()
 
         # Create a frame for the update button, time counter, and epoch counter
