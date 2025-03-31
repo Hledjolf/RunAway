@@ -11,17 +11,18 @@ class MatrixDisplayWindow:
         self.create_widgets()
 
         # Initialize Kalman Filter
-        dt = 0.1
+        self.dt = 0.1
         process_noise = np.diag([1, 1, 1, 1, 1, 1])
         measurement_noise = np.diag([1, 1, 1, 1])
         initial_state = np.array([0, 0, 0, 50, 0, 50])
         initial_covariance = np.eye(6)
-        self.kf = KalmanFilter(dt, process_noise, measurement_noise, initial_state, initial_covariance)
+        self.kf = KalmanFilter(self.dt, process_noise, measurement_noise, initial_state, initial_covariance)
         self.observer_position = np.array([0, 250, 0])
         self.observations = []
+        self.epoch = 0  # Initialize epoch
 
         self.update_display()
-        self.update_time()
+
 
     def create_widgets(self):
         # Create a main frame
@@ -66,7 +67,7 @@ class MatrixDisplayWindow:
         self.observation_text = tk.Text(right_frame, height=6, width=80)
         self.observation_text.pack()
 
-        # Create a frame for the update button and time counter
+        # Create a frame for the update button, time counter, and epoch counter
         update_frame = ttk.Frame(self.root)
         update_frame.pack()
 
@@ -74,7 +75,10 @@ class MatrixDisplayWindow:
         self.update_button.pack(side=tk.LEFT)
 
         self.time_label = ttk.Label(update_frame, text="")
-        self.time_label.pack(side=tk.LEFT)
+        self.time_label.pack(side=tk.LEFT, padx=10)
+
+        self.epoch_label = ttk.Label(update_frame, text="Epoch: 0")
+        self.epoch_label.pack(side=tk.LEFT, padx=10)
 
     def update_display(self):
         self.kf.predict()
@@ -104,10 +108,10 @@ class MatrixDisplayWindow:
         self.measurement_noise_text.delete(1.0, tk.END)
         self.measurement_noise_text.insert(tk.END, str(measurement_noise))
 
-    def update_time(self):
-        current_time = time.strftime('%Y-%m-%d %H:%M:%S')
-        self.time_label.config(text=current_time)
-        self.root.after(1000, self.update_time)  # Update the time every second
+        # Update the epoch
+        self.epoch += self.dt
+        self.epoch_label.config(text=f"Epoch: {self.epoch:.1f}")
+
 
 if __name__ == "__main__":
     root = tk.Tk()
