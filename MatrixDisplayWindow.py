@@ -24,27 +24,27 @@ class MatrixDisplayWindow:
     def create_widgets(self):
         self.state_label = ttk.Label(self.root, text="State Vector")
         self.state_label.pack()
-        self.state_text = tk.Text(self.root, height=6, width=50)
+        self.state_text = tk.Text(self.root, height=6, width=80)  # Increased width
         self.state_text.pack()
 
         self.matrix_A_label = ttk.Label(self.root, text="Matrix A")
         self.matrix_A_label.pack()
-        self.matrix_A_text = tk.Text(self.root, height=6, width=50)
+        self.matrix_A_text = tk.Text(self.root, height=6, width=80)  # Increased width
         self.matrix_A_text.pack()
 
         self.matrix_P_label = ttk.Label(self.root, text="Covariance Matrix P")
         self.matrix_P_label.pack()
-        self.matrix_P_text = tk.Text(self.root, height=6, width=50)
+        self.matrix_P_text = tk.Text(self.root, height=6, width=80)  # Increased width
         self.matrix_P_text.pack()
 
         self.process_noise_label = ttk.Label(self.root, text="Process Noise Matrix Q")
         self.process_noise_label.pack()
-        self.process_noise_text = tk.Text(self.root, height=6, width=50)
+        self.process_noise_text = tk.Text(self.root, height=6, width=80)  # Increased width
         self.process_noise_text.pack()
 
         self.measurement_noise_label = ttk.Label(self.root, text="Measurement Noise Matrix R")
         self.measurement_noise_label.pack()
-        self.measurement_noise_text = tk.Text(self.root, height=6, width=50)
+        self.measurement_noise_text = tk.Text(self.root, height=6, width=80)  # Increased width
         self.measurement_noise_text.pack()
 
         self.update_button = ttk.Button(self.root, text="Update", command=self.update_display)
