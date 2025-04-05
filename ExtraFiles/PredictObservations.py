@@ -1,18 +1,27 @@
 import numpy as np
 import csv
-import sys
+
+def load_observer_metadata(file_path):
+    observer_positions = []
+    observer_names = []
+    measurement_noise_matrix = None
+
+    with open(file_path, 'r') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            observer_names.append(row['Observer'])
+            observer_positions.append(np.array(eval(row['Location'])))
+            measurement_noise_matrix = np.array(eval(row['Measurement Noise Matrix']))
+
+    return observer_positions, observer_names, measurement_noise_matrix
 
 def main():
     # Parameters
     dt = 0.1  # time step
     initial_state = np.array([0, 0, 0, 50, 0, 50])
 
-    # Observer positions
-    observer_positions = [
-        np.array([0, 250, 0]),
-        np.array([250, 250, 0]),
-        np.array([250, -250, 0])
-    ]
+    # Load observer metadata
+    observer_positions, observer_names, measurement_noise_matrix = load_observer_metadata('ObserverMetadata.csv')
 
     # Arrays for storing predicted observations for each observer
     all_azimuths = [[] for _ in observer_positions]
@@ -33,12 +42,12 @@ def main():
 
         for idx, observer_position in enumerate(observer_positions):
             ox, oy, oz = observer_position
-            
+
             range_ = np.sqrt((px - ox) ** 2 + (py - oy) ** 2 + (pz - oz) ** 2)
             azimuth = np.arctan2(py - oy, px - ox)
             elevation = np.arcsin((pz - oz) / range_)
             range_rate = np.dot([vx, vy, vz], [(px - ox) / range_, (py - oy) / range_, (pz - oz) / range_])
-            
+
             all_azimuths[idx].append(azimuth)
             all_elevations[idx].append(elevation)
             all_ranges[idx].append(range_)
@@ -48,12 +57,12 @@ def main():
     with open('predicted_observations.csv', 'w', newline='') as csvfile:
         fieldnames = ['Observer', 'Time step (s)', 'Azimuth', 'Elevation', 'Range', 'Range Rate']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        
+
         writer.writeheader()
-        for idx, observer_position in enumerate(observer_positions):
+        for idx, observer_name in enumerate(observer_names):
             for i in range(len(all_azimuths[idx])):
                 writer.writerow({
-                    'Observer': f"Observer at position {observer_position}",
+                    'Observer': observer_name,
                     'Time step (s)': f"{i * dt:.1f}",
                     'Azimuth': f"{all_azimuths[idx][i]:.2f}",
                     'Elevation': f"{all_elevations[idx][i]:.2f}",
